@@ -55,7 +55,9 @@ int main(void)
 
 	while(1)
 	{		
-		/**main part of this cycle**/
+		//****************************************//
+		//main part of this cycle									//
+		//****************************************//
 		OWReadKey(key);
 		report[0]=dev_address;
 		report[1]=0x22;
@@ -63,7 +65,9 @@ int main(void)
 				report[i]=key[i-2];
 		report[10]=0x13;
 		SendMsgToClient(report,11);
-		/**end of main part**/
+		//****************************************//
+		//end of main part of this cycle					//
+		//****************************************//
 		
 		if( flags & (1<<SEND_ANSWER) )
 		{

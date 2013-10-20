@@ -67,7 +67,9 @@ int main(void)
 		result = ds_reset_pulse();
 		if(result == 0)
 		{
-			
+			ds_write_byte(0x33);
+			for(i=0;i<8;i++)
+				key[i] = ds_read_byte();
 		}
 		/*
 		report[0]=dev_address;

@@ -1,5 +1,6 @@
 #include <stm32f10x.h>
 #include "OneWireLib.h"
+#include "owlib.h"
 // #define	OWTXPORT	 	GPIOD
 // #define OWTXRCC 		RCC_APB2Periph_GPIOD
 // #define OWTX	 			GPIO_Pin_2
@@ -33,20 +34,20 @@ uint8_t ds_reset_pulse(void)
 	if(result) return 1;                            //датчик не обнаружен
 	return 0;                                       //датчик обнаружен      
 }
-/*
+
 //*********************************************************************************************
 //function  передача бита                                                                    //
 //argument  значение передаваемого бита,маска порта                                          //
 //return    none                                                                             //
 //*********************************************************************************************
-void ds_write_bit(uint8_t bit,uint16_t PinMask)
+void ds_write_bit(uint8_t bit)
 {
    TIMER->CNT=0;
-   PORT->ODR &= ~PinMask;                          //потянуть шину к земле
+   OWTXPORT->ODR |=  OWTX;                          //потянуть шину к земле
    while(TIMER->CNT<2){};                          //ждать 1 микросекунду
-   if(bit) PORT->ODR |=  PinMask;                  //если передаем 1, то отпускаем шину
+   if(bit) OWTXPORT->ODR &= ~OWTX;                  //если передаем 1, то отпускаем шину
    while(TIMER->CNT<60){};                         //задержка 60 микросекунд 
-   PORT->ODR |=  PinMask;                          //отпускаем шину 
+   OWTXPORT->ODR &= ~OWTX;                          //отпускаем шину 
 }
 
 //*********************************************************************************************
@@ -54,16 +55,16 @@ void ds_write_bit(uint8_t bit,uint16_t PinMask)
 //argument  маска порта                                                                      //
 //return    прочитанный бит                                                                  //
 //*********************************************************************************************
-uint16_t ds_read_bit(uint16_t PinMask)
+uint16_t ds_read_bit(void)
 {
    uint16_t result;
  
    TIMER->CNT=0;
-   PORT->ODR &= ~PinMask;                          //потянуть шину к земле
+   OWTXPORT->ODR |=  OWTX;                          //потянуть шину к земле
    while(TIMER->CNT<2){};
-   PORT->ODR |=  PinMask;                          //отпускаем шину  
+   OWTXPORT->ODR &= ~OWTX;                          //отпускаем шину  
    while(TIMER->CNT<15){};                         //задержка 15 микросекунд
-   result     =  PORT->IDR & PinMask;              //прочитать шину
+   result     =  OWRXPORT->IDR & OWRX;              //прочитать шину
    while(TIMER->CNT<60){};                         //оставшееся время 
    return result;                                  //возвратить результат
 }
@@ -73,24 +74,25 @@ uint16_t ds_read_bit(uint16_t PinMask)
 //argument  передаваемый байт,маска порта                                                    //
 //return    none                                                                             //
 //*********************************************************************************************
-void ds_write_byte(uint8_t byte, uint16_t PinMask)
+void ds_write_byte(uint8_t byte)
 {
-   uint8_t i;
-   for(i=0;i<8;i++) ds_write_bit(byte&(1<<i), PinMask);
+	uint8_t i;
+	for(i=0;i<8;i++)
+		ds_write_bit(byte&(1<<i));
 }
 //*********************************************************************************************
 //function  чтение байта                                                                     //
 //argument  маска порта                                                                      //
 //return    прочитанный байт                                                                 //
 //*********************************************************************************************
-uint8_t ds_read_byte(uint16_t PinMask)
+uint8_t ds_read_byte(void)
 {
-   uint8_t i,result = 0;
-   for(i=0;i<8;i++) 
-   if(ds_read_bit(PinMask)) result |= 1<<i; 
-   return result;
+	uint8_t i,result = 0;
+	for(i=0;i<8;i++) 
+		if(ds_read_bit()) result |= 1<<i; 
+	return result;
 }
-*/
+
 void ow_init(void)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;   //подать тактирование на TIM3                           /

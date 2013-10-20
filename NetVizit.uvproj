@@ -471,6 +471,11 @@
               <FileType>1</FileType>
               <FilePath>.\Libraries\RS485.c</FilePath>
             </File>
+            <File>
+              <FileName>owlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Libraries\owlib.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

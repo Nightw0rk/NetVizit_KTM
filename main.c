@@ -2,6 +2,7 @@
 #include "OneWireLib.h"
 #include "RS485.h"
 #include "delay.h"
+#include "owlib.h"
 
 #define ADD_KEY 2
 #define PROCESS	4
@@ -18,6 +19,7 @@ volatile uint8_t report[ClientTxBufSize];
 volatile uint8_t dev_address=0x00;
 volatile uint8_t buf_index=0, flags=0x00;
 volatile uint8_t key[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+volatile uint8_t result;
 
 void NewCommandHandler(void);
 void start_process(void);
@@ -34,6 +36,7 @@ int main(void)
 	RS485_Init();
 	NVIC_init();			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	OW_init();
+	ow_init();
 	__enable_irq();
 
 	/*PC8 and PC9 - LEDs*/
@@ -58,13 +61,22 @@ int main(void)
 		//****************************************//
 		//main part of this cycle									//
 		//****************************************//
-		OWReadKey(key);
+		//OWReadKey(key);
+		while((OWRXPORT->IDR & OWRX)!=0);
+		while((OWRXPORT->IDR & OWRX)==0);
+		result = ds_reset_pulse();
+		if(result == 0)
+		{
+			
+		}
+		/*
 		report[0]=dev_address;
 		report[1]=0x22;
 		for	(i=2;i<10;i++)
 				report[i]=key[i-2];
 		report[10]=0x13;
 		SendMsgToClient(report,11);
+		*/
 		//****************************************//
 		//end of main part of this cycle					//
 		//****************************************//

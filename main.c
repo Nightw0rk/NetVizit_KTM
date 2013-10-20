@@ -71,14 +71,12 @@ int main(void)
 			for(i=0;i<8;i++)
 				key[i] = ds_read_byte();
 		}
-		/*
 		report[0]=dev_address;
 		report[1]=0x22;
 		for	(i=2;i<10;i++)
 				report[i]=key[i-2];
 		report[10]=0x13;
 		SendMsgToClient(report,11);
-		*/
 		//****************************************//
 		//end of main part of this cycle					//
 		//****************************************//
